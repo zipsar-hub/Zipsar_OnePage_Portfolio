@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "Area";
+    src: url('/Fonts/Area Regular.otf') format('opentype');
+}
+
+body{
+    background-color: black;
+    color: white;
+    font-family: "Area", sans-serif;
+}
