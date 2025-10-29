@@ -25,7 +25,7 @@ const Header = () => {
   }, [menuOpen]);
 
   return (
-    <div className="w-full h-20 md:h-[90px] flex-center relative z-50">
+    <header className="w-full h-20 md:h-[90px] flex-center relative z-50">
       <div className="flex justify-between items-center w-[90%] md:w-[80%]">
         <h1 className="bold-font text-2xl md:text-3xl lg:text-4xl">ZIPSAR</h1>
 
@@ -34,17 +34,17 @@ const Header = () => {
           onClick={() => setMenuOpen(!menuOpen)}
         >
           <div
-            className={`w-8 h-1 rounded-2xl bg-white absolute top-0 transition-all duration-300 ${
+            className={`w-8 h-0.5 rounded-2xl bg-white absolute top-0 transition-all duration-300 ${
               menuOpen ? "rotate-45 top-2.5" : "rotate-0"
             }`}
           ></div>
           <div
-            className={`w-4 h-1 rounded-2xl bg-white absolute top-2.5 transition-all duration-300 ${
+            className={`w-4 h-0.5 rounded-2xl bg-white absolute top-2.5 transition-all duration-300 ${
               menuOpen ? "opacity-0" : "opacity-100"
             }`}
           ></div>
           <div
-            className={`w-6 h-1 rounded-2xl bg-white absolute bottom-0 transition-all duration-300 ${
+            className={`w-6 h-0.5 rounded-2xl bg-white absolute bottom-0 transition-all duration-300 ${
               menuOpen ? "-rotate-45 bottom-2.5 w-8" : "rotate-0"
             }`}
           ></div>
@@ -86,7 +86,7 @@ const Header = () => {
           </a>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

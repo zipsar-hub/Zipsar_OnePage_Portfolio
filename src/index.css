@@ -28,3 +28,10 @@ body{
     @apply flex items-center justify-between
 }
 
+.flex-around{
+    @apply flex items-center justify-around
+}
+
+.col-around{
+    @apply flex flex-col items-center justify-around
+}
