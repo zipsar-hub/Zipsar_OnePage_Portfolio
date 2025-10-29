@@ -115,8 +115,7 @@ export default function BlobCursor({
               transform: 'translate(-50%, -50%)',
               left: 0,
               top: 0,
-              border: i === 0 ? `2px solid ${fillColor}` : 'none',
-              boxShadow: i === 0 ? `0 0 20px ${fillColor}40` : 'none',
+              boxShadow: i === 0 ? `0 0 0px ${fillColor}0` : 'none',
               transition: 'background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease'
             }}
           />

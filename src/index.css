@@ -5,8 +5,26 @@
     src: url('/Fonts/Area Regular.otf') format('opentype');
 }
 
+@font-face {
+    font-family: "Area Bold";
+    src: url('/Fonts/Area Bold.otf') format('opentype');
+}
+
 body{
     background-color: black;
     color: white;
     font-family: "Area", sans-serif;
 }
+.bold-font{
+    font-family: "Area Bold", sans-serif;
+    font-size: 700;
+}
+
+.flex-center{
+    @apply flex items-center justify-center
+}
+
+.flex-between{
+    @apply flex items-center justify-between
+}
+
