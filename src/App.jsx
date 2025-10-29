@@ -19,11 +19,11 @@ const App = () => {
       <div className="min-h-screen">
         <Header />
         <Home />
-        <About />
+        {/* <About />
         <Service />
         <CaseStudy />
         <News />
-        <Contant />
+        <Contant /> */}
       </div>
     </BlobCursor>
   )
