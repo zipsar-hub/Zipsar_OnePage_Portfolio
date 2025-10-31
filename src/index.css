@@ -27,6 +27,10 @@ body{
     font-family: "FontAwesome", sans-serif;
 }
 
+.col-center{
+    @apply flex flex-col items-center justify-center
+}
+
 .flex-center{
     @apply flex items-center justify-center
 }
