@@ -9,88 +9,12 @@ import {
   Linkedin,
   Youtube,
 } from "lucide-react";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
-// LogoLoop Component
-const LogoLoop = ({
-  logos,
-  speed,
-  direction,
-  logoHeight,
-  gap,
-  pauseOnHover,
-  scaleOnHover,
-  fadeOut,
-  fadeOutColor,
-}) => {
-  const [isPaused, setIsPaused] = useState(false);
-
-  const animationDuration = `${speed}s`;
-  const animationDirection = direction === "right" ? "reverse" : "normal";
-
-  return (
-    <div
-      className="relative w-full overflow-hidden"
-      style={{ height: `${logoHeight}px` }}
-    >
-      {fadeOut && (
-        <>
-          <div
-            className="absolute left-0 top-0 bottom-0 w-32 pointer-events-none z-10"
-            style={{
-              background: `linear-gradient(to right, ${fadeOutColor}, transparent)`,
-            }}
-          />
-          <div
-            className="absolute right-0 top-0 bottom-0 w-32 pointer-events-none z-10"
-            style={{
-              background: `linear-gradient(to left, ${fadeOutColor}, transparent)`,
-            }}
-          />
-        </>
-      )}
-      <div
-        className="flex gap-0"
-        style={{
-          animation: `scroll ${animationDuration} linear infinite`,
-          animationDirection: animationDirection,
-          animationPlayState: isPaused ? "paused" : "running",
-        }}
-        onMouseEnter={() => pauseOnHover && setIsPaused(true)}
-        onMouseLeave={() => pauseOnHover && setIsPaused(false)}
-      >
-        {[...logos, ...logos, ...logos].map((logo, index) => (
-          <div
-            key={index}
-            className={`flex-shrink-0 flex items-center justify-center ${
-              scaleOnHover ? "transition-transform hover:scale-110" : ""
-            }`}
-            style={{
-              width: `${logoHeight}px`,
-              height: `${logoHeight}px`,
-              marginRight: `${gap}px`,
-            }}
-          >
-            <img
-              src={logo.src}
-              alt={logo.alt}
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
-        ))}
-      </div>
-      <style>{`
-        @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-${100 / 3}%);
-          }
-        }
-      `}</style>
-    </div>
-  );
-};
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger);
+import LogoLoop from "../Components/Home/LogoLoop";
 
 //Bg Video Component
 const heroVideoSrc = "/video/14520076_1920_1080_24fps.mp4";
@@ -106,7 +30,7 @@ const FAQItem = ({ question, answer, isOpen, onToggle }) => {
         <h3 className="text-lg md:text-xl font-medium flex-1 text-left">
           {question}
         </h3>
-        <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-300">
+        <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-300">
           {isOpen ? (
             <Minus className="w-5 h-5 md:w-6 md:h-6" />
           ) : (
@@ -169,71 +93,214 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    // Smooth scroll animation for image grid
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -100px 0px",
-    };
+    // Initialize animations when component mounts
+    const initAnimations = () => {
+      // Hero Section Animation
+      const heroTl = gsap.timeline({ delay: 0.2 });
+      heroTl
+        .fromTo("h1:first-child", 
+          { opacity: 0, y: 50 },
+          { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+        )
+        .fromTo("h1:nth-child(2)", 
+          { opacity: 0, y: 50 },
+          { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+          "-=0.7"
+        )
+        .fromTo(".hero-span", 
+          { opacity: 0 },
+          { opacity: 1, duration: 0.8, ease: "power2.out" },
+          "-=0.5"
+        );
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = "1";
-          entry.target.style.transform = "translateY(0)";
+      // Featured Section Animation with improved timing
+      const featuredTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".featured-title",
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+          markers: false
         }
       });
-    }, observerOptions);
 
-    if (imageGridRef.current) {
-      const images =
-        imageGridRef.current.querySelectorAll(".animate-on-scroll");
-      images.forEach((img) => {
-        img.style.opacity = "0";
-        img.style.transform = "translateY(50px)";
-        img.style.transition = "opacity 0.8s ease-out, transform 0.8s ease-out";
-        observer.observe(img);
+      featuredTl
+        .fromTo(".featured-title", 
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1, ease: "power4.out" }
+        )
+        .fromTo(".featured-item",
+          { opacity: 0, y: 30 },
+          { 
+            opacity: 1, 
+            y: 0, 
+            duration: 1, 
+            stagger: { 
+              each: 0.2,
+              from: "random"
+            }, 
+            ease: "power3.out" 
+          },
+          "-=0.6"
+        );
+
+      // About Section Animation with smoother transitions
+      const aboutTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".about-content",
+          start: "top 75%",
+          end: "bottom 25%",
+          toggleActions: "play none none reverse",
+          markers: false
+        }
       });
-    }
 
-    return () => observer.disconnect();
+      aboutTl
+        .fromTo(".about-content",
+          { opacity: 0, x: -100 },
+          { opacity: 1, x: 0, duration: 1.2, ease: "power2.out" }
+        )
+        .fromTo(".about-image",
+          { opacity: 0, x: 100 },
+          { opacity: 1, x: 0, duration: 1.2, ease: "power2.out" },
+          "-=1"
+        );
+
+      // Services Section Animation - Vertical text reveal
+      const servicesTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".services-container",
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+          markers: false
+        }
+      });
+
+      // Select all service items
+      const serviceItems = document.querySelectorAll('.service-item');
+
+      // Animate each service item
+      serviceItems.forEach((item, index) => {
+        servicesTl.fromTo(item,
+          { 
+            opacity: 0,
+            y: 50,
+            scaleY: 0.8
+          },
+          { 
+            opacity: 1,
+            y: 0,
+            scaleY: 1,
+            duration: 0.6,
+            ease: "power2.out"
+          },
+          index * 0.1
+        );
+
+        // Animate the text inside
+        servicesTl.fromTo(item.querySelector('.service-text'),
+          {
+            opacity: 0,
+            y: 20
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out"
+          },
+          "-=0.3"
+        );
+      });
+
+      // Image Grid Animation with improved effects
+      if (imageGridRef.current) {
+        const revealImages = imageGridRef.current.querySelectorAll('.reveal-image');
+        const imageTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: imageGridRef.current,
+            start: "top 70%",
+            end: "bottom 20%",
+            toggleActions: "play none none reverse",
+            markers: false
+          }
+        });
+
+        revealImages.forEach((image, index) => {
+          const direction = index % 2 === 0 ? -50 : 50;
+          
+          imageTl.fromTo(image, 
+            { 
+              y: 50,
+              x: direction,
+              opacity: 0,
+              scale: 0.95,
+              rotation: direction > 0 ? 5 : -5
+            },
+            {
+              duration: 1.2,
+              y: 0,
+              x: 0,
+              opacity: 1,
+              scale: 1,
+              rotation: 0,
+              ease: "power3.out",
+              stagger: {
+                amount: 1.5,
+                from: "random"
+              }
+            },
+            index * 0.2
+          );
+        });
+      }
+    };
+
+    // Initialize animations
+    initAnimations();
+
+    // Cleanup function
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   return (
     <section id="Home" className="w-full overflow-hidden">
-      <div className="min-h-[calc(100vh-90px)] relative flex flex-col justify-around items-center py-10 px-4 md:px-8">
-        {/* Background Video */}
+      <div className="min-h-[calc(100vh-90px)] relative flex flex-col justify-center items-center py-10 px-4 md:px-8 overflow-hidden">
+        {/* Background Video with improved performance */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
+          className="absolute inset-0 w-full h-full object-cover z-0 scale-105"
           style={{ pointerEvents: "none" }}
+          preload="auto"
         >
           <source src={heroVideoSrc} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
-        {/* Overlay for dimming/fade effect, optional */}
-        <div className="absolute inset-0 bg-black/50 z-10" />
+        {/* Gradient Overlay for better text visibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10" />
 
-        {/* Hero content (must be relatively positioned above video) */}
-        <div className="relative z-20 flex flex-col gap-2 md:gap-4 w-full md:w-[80%] lg:w-[70%] xl:w-[60%]">
-          <h1 className="font-semibold text-[48px] sm:text-[64px] md:text-[80px] lg:text-[120px] xl:text-[128px] text-left leading-none">
+        {/* Hero content with improved typography and spacing */}
+        <div className="relative z-20 flex flex-col gap-2 md:gap-4 w-full md:w-[80%] lg:w-[70%] xl:w-[60%] mt-[-5vh]">
+          <h1 className="font-bold text-[48px] sm:text-[64px] md:text-[80px] lg:text-[120px] xl:text-[128px] text-left leading-[0.9] tracking-tight opacity-0">
             Building
           </h1>
-          <h1 className="font-semibold text-[48px] sm:text-[64px] md:text-[80px] lg:text-[120px] xl:text-[128px] text-right leading-none">
-            what matters.
+          <h1 className="font-bold text-[48px] sm:text-[64px] md:text-[80px] lg:text-[120px] xl:text-[128px] text-right leading-[0.9] tracking-tight opacity-0">
+            what matters<span className="text-teal-400">.</span>
           </h1>
         </div>
-        <span className="relative z-20 font-semibold text-sm sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-tight mt-8">
-          Design • Develope • Deliver
+        <span className="hero-span absolute bottom-20 font-semibold left-10 z-20 text-sm sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-wider mt-8 text-teal-400">
+          Design • Develop • Deliver
         </span>
       </div>
 
       {/* Partners Section */}
       <div className="flex items-center justify-center py-10 my-10 px-4">
-        <h1 className="font-semibold text-lg sm:text-xl md:text-2xl lg:text-3xl text-center max-w-4xl">
+        <h1 className="font-semibold text-lg sm:text-xl md:text-2xl lg:text-3xl text-center">
           We partner with some incredible brands, take a look.
         </h1>
       </div>
@@ -267,83 +334,97 @@ const Home = () => {
         />
       </div>
 
-      {/* Image Grid Section */}
-      <div
-        ref={imageGridRef}
-        className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 my-16 md:my-24 relative z-10"
-      >
-        <div className="flex flex-col gap-6 md:gap-8 lg:gap-10">
-          <div className="animate-on-scroll w-full h-[250px] md:h-[300px] overflow-hidden rounded-2xl transition-transform hover:scale-[1.02] duration-500">
-            <img
-              src="https://picsum.photos/500/300?random=1"
-              alt="Portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="animate-on-scroll w-full h-[250px] md:h-[300px] overflow-hidden rounded-2xl transition-transform hover:scale-[1.02] duration-500">
-            <img
-              src="https://picsum.photos/500/300?random=2"
-              alt="Portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-6 md:gap-8 lg:gap-10">
-          <div className="animate-on-scroll w-full h-[150px] md:h-[200px] overflow-hidden rounded-2xl transition-transform hover:scale-[1.02] duration-500">
-            <img
-              src="https://picsum.photos/500/300?random=3"
-              alt="Portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="animate-on-scroll w-full h-[150px] md:h-[200px] overflow-hidden rounded-2xl transition-transform hover:scale-[1.02] duration-500">
-            <img
-              src="https://picsum.photos/500/300?random=4"
-              alt="Portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="animate-on-scroll w-full h-[150px] md:h-[200px] overflow-hidden rounded-2xl transition-transform hover:scale-[1.02] duration-500">
-            <img
-              src="https://picsum.photos/500/300?random=5"
-              alt="Portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-6 md:gap-8 lg:gap-10">
-          <div className="animate-on-scroll w-full h-[250px] md:h-[300px] overflow-hidden rounded-2xl transition-transform hover:scale-[1.02] duration-500">
-            <img
-              src="https://picsum.photos/500/300?random=6"
-              alt="Portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="animate-on-scroll w-full h-[250px] md:h-[300px] overflow-hidden rounded-2xl transition-transform hover:scale-[1.02] duration-500">
-            <img
-              src="https://picsum.photos/500/300?random=7"
-              alt="Portfolio"
-              className="w-full h-full object-cover"
-            />
-          </div>
+      {/* Image Grid Section with GSAP Reveal Animation */}
+      <div className="relative py-20 md:py-32">
+        <div
+          ref={imageGridRef}
+          className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
+        >
+            {/* Column 1 */}
+            <div className="flex flex-col gap-4 md:gap-6 lg:gap-8">
+              <div className="reveal-image w-full h-[200px] sm:h-[250px] md:h-[300px] overflow-hidden rounded-2xl shadow-2xl opacity-0 translate-y-10">
+                <img
+                  src="https://picsum.photos/500/300?random=1"
+                  alt="Portfolio"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+              <div className="reveal-image w-full h-[200px] sm:h-[250px] md:h-[300px] overflow-hidden rounded-2xl shadow-2xl opacity-0 translate-y-10">
+                <img
+                  src="https://picsum.photos/500/300?random=2"
+                  alt="Portfolio"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+            </div>
+
+            {/* Column 2 */}
+            <div className="flex flex-col gap-4 md:gap-6 lg:gap-8">
+              <div className="reveal-image w-full h-[120px] sm:h-[150px] md:h-[200px] overflow-hidden rounded-2xl shadow-2xl opacity-0 translate-y-10">
+                <img
+                  src="https://picsum.photos/500/300?random=3"
+                  alt="Portfolio"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+              <div className="reveal-image w-full h-[120px] sm:h-[150px] md:h-[200px] overflow-hidden rounded-2xl shadow-2xl opacity-0 translate-y-10">
+                <img
+                  src="https://picsum.photos/500/300?random=4"
+                  alt="Portfolio"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+              <div className="reveal-image w-full h-[120px] sm:h-[150px] md:h-[200px] overflow-hidden rounded-2xl shadow-2xl opacity-0 translate-y-10">
+                <img
+                  src="https://picsum.photos/500/300?random=5"
+                  alt="Portfolio"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+            </div>
+
+            {/* Column 3 */}
+            <div className="flex flex-col gap-4 md:gap-6 lg:gap-8">
+              <div className="reveal-image w-full h-[200px] sm:h-[250px] md:h-[300px] overflow-hidden rounded-2xl shadow-2xl opacity-0 translate-y-10">
+                <img
+                  src="https://picsum.photos/500/300?random=6"
+                  alt="Portfolio"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+              <div className="reveal-image w-full h-[200px] sm:h-[250px] md:h-[300px] overflow-hidden rounded-2xl shadow-2xl opacity-0 translate-y-10">
+                <img
+                  src="https://picsum.photos/500/300?random=7"
+                  alt="Portfolio"
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                />
+              </div>
+            </div>
         </div>
       </div>
 
       {/* Featured In Section */}
+      {/* Featured In Section */}
       <div className="mt-16 md:mt-24 lg:mt-32 px-4">
-        <h1 className="w-full text-center text-lg sm:text-xl md:text-2xl font-semibold mb-10 md:mb-16">
+        <h1 className="featured-title w-full text-center text-lg sm:text-xl md:text-2xl font-semibold mb-10 md:mb-16 opacity-0">
           AS FEATURED IN:
         </h1>
-        <div className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div className="featured-grid w-[90%] md:w-[85%] lg:w-[80%] mx-auto grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
+          {['/Images/as featured/image-1.png', 
+          '/Images/as featured/image-2.png',
+          '/Images/as featured/image-3.webp',
+          '/Images/as featured/image-4.webp',
+          '/Images/as featured/image-5.webp',
+          '/Images/as featured/image-6.webp',
+          ].map((i) => (
             <div
               key={i}
-              className="aspect-[3/1] rounded-lg overflow-hidden hover:opacity-80 transition-opacity duration-300"
+              className="featured-item aspect-3/1 rounded-lg overflow-hidden hover:opacity-80 transition-opacity duration-300 opacity-0"
             >
               <img
-                src={`https://picsum.photos/300/100?random=${i + 10}`}
+                src={`${i}`}
                 alt="Featured"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-fill"
               />
             </div>
           ))}
@@ -351,12 +432,11 @@ const Home = () => {
       </div>
 
       {/* About Section */}
-      <div className="my-16 md:my-24 py-10 md:py-16 lg:py-20 px-4">
+      <div className="my-16 md:my-24 py-10 md:py-16 lg:py-20 px-4 relative overflow-hidden">
         <div className="w-full md:w-[90%] lg:w-[80%] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16">
-          <div className="w-full lg:w-1/2 flex flex-col gap-6 md:gap-8 lg:gap-10">
+          <div className="about-content w-full lg:w-1/2 flex flex-col gap-6 md:gap-8 lg:gap-10 opacity-0 translate-x-[-100px]">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight">
-              We drive digital success, through award-winning marketing
-              strategies.
+              We drive digital success, through award-winning marketing strategies.
             </h1>
             <p className="text-sm md:text-base leading-relaxed text-white/90">
               As an experienced and dedicated digital marketing agency based in
@@ -368,22 +448,22 @@ const Home = () => {
               media, SEO or advice surrounding your current marketing strategy,
               our team of digital marketing experts are on hand to help.
             </p>
-            <button className="text-base md:text-lg flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full bg-white text-black w-full sm:w-auto max-w-[300px] hover:bg-gray-100 transition-all duration-300 font-medium">
-              <ArrowRight className="w-5 h-5" /> WHO WE ARE
+            <button className="text-base md:text-lg flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full bg-white text-black w-full sm:w-auto max-w-[300px] hover:bg-gray-100 transition-all duration-300 font-medium group">
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /> WHO WE ARE
             </button>
           </div>
-          <div className="w-full lg:w-1/2 flex items-center justify-center">
+          <div className="about-image w-full lg:w-1/2 flex items-center justify-center opacity-0 translate-x-[100px]">
             <img
               src="https://picsum.photos/450?random=20"
               alt="About Us"
-              className="rounded-2xl object-cover w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px]"
+              className="rounded-2xl object-cover w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[500px] shadow-2xl hover:scale-[1.02] transition-transform duration-500"
             />
           </div>
         </div>
       </div>
 
       {/* Services Section - Vertical Text */}
-      <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-20 w-[90%] md:w-[85%] lg:w-[80%] mx-auto my-16 md:my-24 py-10">
+      <div className="services-container flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-20 w-[90%] md:w-[85%] lg:w-[80%] mx-auto my-16 md:my-24 py-10 relative z-10">
         {[
           { num: "01", title: "Graphic Design" },
           { num: "02", title: "Search Engine Optimization" },
@@ -394,18 +474,18 @@ const Home = () => {
         ].map((service) => (
           <div
             key={service.num}
-            className="flex items-center justify-center h-36 sm:h-48 md:h-54"
+            className="service-item group flex items-center justify-center h-36 sm:h-48 md:h-64 w-24 sm:w-28 md:w-32 opacity-0"
           >
-            <h1 className="text-lg sm:text-xl md:text-2xl whitespace-nowrap transform -rotate-90 origin-center">
-              <span className="font-semibold italic">{service.num}</span>{" "}
-              {service.title}
+            <h1 className="service-text text-base sm:text-lg md:text-xl whitespace-nowrap [writing-mode:vertical-lr] rotate-180 group-hover:text-teal-400 transition-colors duration-300">
+              <span className="font-semibold italic">{service.num}</span>
+              <span className="ml-2">{service.title}</span>
             </h1>
           </div>
         ))}
       </div>
 
       {/* Stats Section */}
-      <div className="my-16 md:my-24 lg:my-32">
+      <div className="my-16 md:my-24 lg:my-32 relative z-10">
         <div className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto py-10 md:py-16 lg:py-20">
           <h1 className="font-thin text-base sm:text-lg md:text-xl w-full text-center mb-12 md:mb-16 lg:mb-20 tracking-wider">
             WHY WORK WITH US?
@@ -440,7 +520,7 @@ const Home = () => {
       </div>
 
       {/* FAQ Section */}
-      <div className="my-16 md:my-24 py-10 md:py-16 px-4">
+      <div className="my-16 md:my-24 py-10 md:py-16 px-4 relative z-10">
         <div className="w-full md:w-[90%] lg:w-[80%] mx-auto">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-center mb-10 md:mb-16">
             Frequently Asked Questions
@@ -460,21 +540,24 @@ const Home = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="flex flex-col items-center justify-center gap-6 md:gap-10 w-full min-h-[60vh] md:min-h-[calc(100vh-80px)] py-16 md:py-20 px-4">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-center max-w-3xl leading-tight">
+      <div className="flex flex-col items-center justify-center gap-6 md:gap-10 w-full min-h-[60vh] md:min-h-[calc(100vh-80px)] py-16 md:py-20 px-4 relative">
+        <div className="absolute z-10 w-10/12 h-10/12">
+          <img src="/Images/as featured/background.webp" alt="Background Image" className="w-full h-full object-fill" />
+        </div>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-center max-w-3xl leading-tight z-50">
           Ready to transform your business?
         </h1>
-        <p className="text-base sm:text-lg md:text-xl text-center text-white/90">
+        <p className="text-base sm:text-lg md:text-xl text-center text-white/90 z-50">
           Book an informal chat with one of our specialists
         </p>
-        <button className="px-6 py-3 md:px-8 md:py-4 bg-white text-black text-lg md:text-xl rounded-full flex gap-2 items-center hover:bg-gray-100 transition-all duration-300 font-medium">
+        <button className="px-6 py-3 md:px-8 md:py-4 z-50 bg-white text-black text-lg md:text-xl rounded-full flex gap-2 items-center hover:bg-gray-100 transition-all duration-300 font-medium">
           <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
           GET IN TOUCH
         </button>
       </div>
 
       {/* Footer */}
-      <div className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto border-t-2 border-white/30 my-12 md:my-20 pt-12 md:pt-16">
+      <div className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto border-t-2 border-white/30 my-12 md:my-20 pt-12 md:pt-16 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 lg:gap-16">
           <div>
             <h1 className="mb-6 md:mb-8 font-semibold text-lg md:text-xl">
