@@ -293,7 +293,7 @@ const Home = () => {
             what matters<span className="text-teal-400">.</span>
           </h1>
         </div>
-        <span className="hero-span absolute bottom-20 font-semibold left-10 z-20 text-sm sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-wider mt-8 text-teal-400">
+        <span className="hero-span absolute bottom-20 font-semibold left-10 z-20 text-sm sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-wider mt-8">
           Design • Develop • Deliver
         </span>
       </div>
