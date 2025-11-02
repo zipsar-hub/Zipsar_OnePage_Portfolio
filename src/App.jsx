@@ -12,8 +12,8 @@ const App = () => {
   return (
     <BlobCursor
       size={30}
-      fillColor="#45E8C1"
-      hoverColor="#8C00FF"
+      fillColor="#2569ED"
+      hoverColor="#EDB842"
       hoverScale={1.5}
     >
       <div className="min-h-screen">
