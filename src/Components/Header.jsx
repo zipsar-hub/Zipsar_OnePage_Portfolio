@@ -27,7 +27,7 @@ const Header = () => {
   return (
     <header className="w-full h-20 md:h-[90px] flex-center relative z-50">
       <div className="flex justify-between items-center w-[90%] md:w-[80%]">
-        <h1 className="bold-font text-2xl md:text-3xl lg:text-4xl">ZIPSAR</h1>
+        <img src="public\Images\logo\logo-white.svg" alt="ZIPSAR Logo" className="h-6 md:h-8 lg:h-10" />
 
         <button
           className="flex flex-col outline-none gap-1 cursor-pointer z-50 relative w-8 h-6"
