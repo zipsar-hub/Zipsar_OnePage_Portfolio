@@ -95,7 +95,19 @@ const Home = () => {
   useEffect(() => {
     // Initialize animations when component mounts
     const initAnimations = () => {
-      // Hero Section Animation
+      // Parallax for background video
+      gsap.to(".hero-video", {
+        scrollTrigger: {
+          trigger: ".hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1
+        },
+        scale: 1.1,
+        y: "20%"
+      });
+
+      // Hero Section Animation with Parallax
       const heroTl = gsap.timeline({ delay: 0.2 });
       heroTl
         .fromTo("h1:first-child", 
@@ -113,40 +125,68 @@ const Home = () => {
           "-=0.5"
         );
 
-      // Featured Section Animation with improved timing
+      // Parallax for hero text
+      gsap.to(".hero-content", {
+        scrollTrigger: {
+          trigger: ".hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1
+        },
+        y: "-30%"
+      });
+
+      // Featured Section Animation with professional reveal
+      gsap.set(".featured-title", { opacity: 0, y: 30 });
+      gsap.set(".featured-item", { opacity: 0, y: 20 });
+
       const featuredTl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".featured-title",
-          start: "top 85%",
+          trigger: ".featured-section",
+          start: "top 75%",
+          end: "bottom 25%",
           toggleActions: "play none none reverse",
           markers: false
         }
       });
 
       featuredTl
-        .fromTo(".featured-title", 
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 1, ease: "power4.out" }
-        )
-        .fromTo(".featured-item",
-          { opacity: 0, y: 30 },
-          { 
-            opacity: 1, 
-            y: 0, 
-            duration: 1, 
-            stagger: { 
-              each: 0.2,
-              from: "random"
-            }, 
-            ease: "power3.out" 
+        .to(".featured-title", {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        })
+        .to(".featured-item", {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: {
+            each: 0.1,
+            from: "start",
+            grid: "auto"
           },
-          "-=0.6"
-        );
+          ease: "power2.out"
+        }, "-=0.4");
 
-      // About Section Animation with smoother transitions
+      // Add subtle parallax to featured items
+      document.querySelectorAll('.featured-item').forEach((item, index) => {
+        gsap.to(item, {
+          scrollTrigger: {
+            trigger: ".featured-section",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1
+          },
+          y: (index % 2 === 0) ? -15 : 15,
+          ease: "none"
+        });
+      });
+
+      // About Section Animation with Parallax
       const aboutTl = gsap.timeline({
         scrollTrigger: {
-          trigger: ".about-content",
+          trigger: ".about-section",
           start: "top 75%",
           end: "bottom 25%",
           toggleActions: "play none none reverse",
@@ -165,7 +205,28 @@ const Home = () => {
           "-=1"
         );
 
-      // Services Section Animation - Vertical text reveal
+      // Parallax for about section elements
+      gsap.to(".about-content", {
+        scrollTrigger: {
+          trigger: ".about-section",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1
+        },
+        y: -50
+      });
+
+      gsap.to(".about-image", {
+        scrollTrigger: {
+          trigger: ".about-section",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.5
+        },
+        y: -80
+      });
+
+      // Services Section Animation with Parallax
       const servicesTl = gsap.timeline({
         scrollTrigger: {
           trigger: ".services-container",
@@ -178,8 +239,9 @@ const Home = () => {
       // Select all service items
       const serviceItems = document.querySelectorAll('.service-item');
 
-      // Animate each service item
+      // Animate each service item with stagger and parallax
       serviceItems.forEach((item, index) => {
+        // Initial animation
         servicesTl.fromTo(item,
           { 
             opacity: 0,
@@ -210,16 +272,44 @@ const Home = () => {
           },
           "-=0.3"
         );
+
+        // Add parallax effect to each service item
+        gsap.to(item, {
+          scrollTrigger: {
+            trigger: item,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1
+          },
+          y: -30 * (index % 2 ? 1 : -1), // Alternate direction for more interest
+          ease: "none"
+        });
       });
 
-      // Image Grid Animation with improved effects
+      // Stats Section Parallax
+      const statsItems = document.querySelectorAll('.stats-item');
+      statsItems.forEach((item, index) => {
+        gsap.from(item, {
+          scrollTrigger: {
+            trigger: item,
+            start: "top 80%",
+            end: "top 30%",
+            scrub: 1
+          },
+          y: 50,
+          opacity: 0.5,
+          ease: "none"
+        });
+      });
+
+      // Image Grid Animation with earlier trigger point
       if (imageGridRef.current) {
         const revealImages = imageGridRef.current.querySelectorAll('.reveal-image');
         const imageTl = gsap.timeline({
           scrollTrigger: {
             trigger: imageGridRef.current,
-            start: "top 70%",
-            end: "bottom 20%",
+            start: "top 80%", // Changed from 70% to 80% to start earlier
+            end: "bottom 40%", // Changed from 20% to 40% for earlier completion
             toggleActions: "play none none reverse",
             markers: false
           }
@@ -266,14 +356,14 @@ const Home = () => {
 
   return (
     <section id="Home" className="w-full overflow-hidden">
-      <div className="min-h-[calc(100vh-90px)] relative flex flex-col justify-center items-center py-10 px-4 md:px-8 overflow-hidden">
-        {/* Background Video with improved performance */}
+      <div className="hero-section min-h-[calc(100vh-90px)] relative flex flex-col justify-center items-center py-10 px-4 md:px-8 overflow-hidden">
+        {/* Background Video with Parallax */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0 scale-105"
+          className="hero-video absolute inset-0 w-full h-full object-cover z-0 scale-105 transform"
           style={{ pointerEvents: "none" }}
           preload="auto"
         >
@@ -281,11 +371,11 @@ const Home = () => {
           Your browser does not support the video tag.
         </video>
 
-        {/* Gradient Overlay for better text visibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10" />
+        {/* Gradient Overlay with Parallax */}
+        <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/50 to-black/80 z-10 transform" />
 
-        {/* Hero content with improved typography and spacing */}
-        <div className="relative z-20 flex flex-col gap-2 md:gap-4 w-full md:w-[80%] lg:w-[70%] xl:w-[60%] mt-[-5vh]">
+        {/* Hero content with Parallax */}
+        <div className="hero-content relative z-20 flex flex-col gap-2 md:gap-4 w-full md:w-[80%] lg:w-[70%] xl:w-[60%] mt-[-5vh] transform">
           <h1 className="font-bold text-[48px] sm:text-[64px] md:text-[80px] lg:text-[120px] xl:text-[128px] text-left leading-[0.9] tracking-tight opacity-0">
             Building
           </h1>
@@ -293,7 +383,7 @@ const Home = () => {
             what matters<span className="text-teal-400">.</span>
           </h1>
         </div>
-        <span className="hero-span absolute bottom-20 font-semibold left-10 z-20 text-sm sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-wider mt-8">
+        <span className="hero-span absolute bottom-20 font-semibold left-10 z-20 text-sm sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-wider mt-8 text-teal-400">
           Design • Develop • Deliver
         </span>
       </div>
@@ -404,37 +494,40 @@ const Home = () => {
       </div>
 
       {/* Featured In Section */}
-      {/* Featured In Section */}
-      <div className="mt-16 md:mt-24 lg:mt-32 px-4">
-        <h1 className="featured-title w-full text-center text-lg sm:text-xl md:text-2xl font-semibold mb-10 md:mb-16 opacity-0">
-          AS FEATURED IN:
-        </h1>
-        <div className="featured-grid w-[90%] md:w-[85%] lg:w-[80%] mx-auto grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
-          {['/Images/as featured/image-1.png', 
-          '/Images/as featured/image-2.png',
-          '/Images/as featured/image-3.webp',
-          '/Images/as featured/image-4.webp',
-          '/Images/as featured/image-5.webp',
-          '/Images/as featured/image-6.webp',
-          ].map((i) => (
-            <div
-              key={i}
-              className="featured-item aspect-3/1 rounded-lg overflow-hidden hover:opacity-80 transition-opacity duration-300 opacity-0"
-            >
-              <img
-                src={`${i}`}
-                alt="Featured"
-                className="w-full h-full object-fill"
-              />
-            </div>
-          ))}
+      <div className="featured-section mt-16 md:mt-24 lg:mt-32 px-4 relative overflow-hidden">
+        <div className="featured-content w-[90%] md:w-[85%] lg:w-[80%] mx-auto">
+          <h1 className="featured-title w-full text-center text-lg sm:text-xl md:text-2xl font-semibold mb-10 md:mb-16 opacity-0 transform">
+            AS FEATURED IN:
+          </h1>
+          <div className="featured-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
+            {['/Images/as featured/image-1.png', 
+            '/Images/as featured/image-2.png',
+            '/Images/as featured/image-3.webp',
+            '/Images/as featured/image-4.webp',
+            '/Images/as featured/image-5.webp',
+            '/Images/as featured/image-6.webp',
+            ].map((i, index) => (
+              <div
+                key={i}
+                className="featured-item group col-span-1 md:col-span-1 aspect-3/2 lg:aspect-3/1.5 rounded-lg overflow-hidden opacity-0 transform hover:shadow-2xl transition-all duration-500"
+              >
+                <div className="w-full h-full relative bg-black/10 backdrop-blur-sm">
+                  <img
+                    src={`${i}`}
+                    alt="Featured"
+                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500 filter grayscale hover:grayscale-0"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* About Section */}
-      <div className="my-16 md:my-24 py-10 md:py-16 lg:py-20 px-4 relative overflow-hidden">
-        <div className="w-full md:w-[90%] lg:w-[80%] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16">
-          <div className="about-content w-full lg:w-1/2 flex flex-col gap-6 md:gap-8 lg:gap-10 opacity-0 translate-x-[-100px]">
+      <div className="about-section my-16 md:my-24 py-10 md:py-16 lg:py-20 px-4 relative overflow-hidden">
+        <div className="parallax-wrapper w-full md:w-[90%] lg:w-[80%] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16">
+          <div className="about-content w-full lg:w-1/2 flex flex-col gap-6 md:gap-8 lg:gap-10 opacity-0 translate-x-[-100px] transform">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight">
               We drive digital success, through award-winning marketing strategies.
             </h1>
@@ -448,11 +541,11 @@ const Home = () => {
               media, SEO or advice surrounding your current marketing strategy,
               our team of digital marketing experts are on hand to help.
             </p>
-            <button className="text-base md:text-lg flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full bg-white text-black w-full sm:w-auto max-w-[300px] hover:bg-gray-100 transition-all duration-300 font-medium group">
+            <button className="text-base md:text-lg flex items-center justify-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full bg-white text-black w-full sm:w-auto max-w-[300px] hover:bg-gray-100 hover:scale-105 transition-all duration-300 font-medium group">
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /> WHO WE ARE
             </button>
           </div>
-          <div className="about-image w-full lg:w-1/2 flex items-center justify-center opacity-0 translate-x-[100px]">
+          <div className="about-image w-full lg:w-1/2 flex items-center justify-center opacity-0 translate-x-[100px] transform">
             <img
               src="https://picsum.photos/450?random=20"
               alt="About Us"
@@ -463,35 +556,39 @@ const Home = () => {
       </div>
 
       {/* Services Section - Vertical Text */}
-      <div className="services-container flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 xl:gap-20 w-[90%] md:w-[85%] lg:w-[80%] mx-auto my-16 md:my-24 py-10 relative z-10">
-        {[
-          { num: "01", title: "Graphic Design" },
-          { num: "02", title: "Search Engine Optimization" },
-          { num: "03", title: "Social Media" },
-          { num: "04", title: "Web Design" },
-          { num: "05", title: "Website Hosting" },
-          { num: "06", title: "Website Maintenance" },
-        ].map((service) => (
-          <div
-            key={service.num}
-            className="service-item group flex items-center justify-center h-36 sm:h-48 md:h-64 w-24 sm:w-28 md:w-32 opacity-0"
-          >
-            <h1 className="service-text text-base sm:text-lg md:text-xl whitespace-nowrap [writing-mode:vertical-lr] rotate-180 group-hover:text-teal-400 transition-colors duration-300">
-              <span className="font-semibold italic">{service.num}</span>
-              <span className="ml-2">{service.title}</span>
-            </h1>
-          </div>
-        ))}
+      <div className="w-[95%] md:w-[90%] lg:w-[85%] mx-auto my-16 md:my-24 py-10 relative z-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-1 gap-y-8 sm:gap-4 md:gap-6 lg:gap-8">
+          {[
+            { num: "01", title: "Graphic Design" },
+            { num: "02", title: "Search Engine Optimization" },
+            { num: "03", title: "Social Media" },
+            { num: "04", title: "Web Design" },
+            { num: "05", title: "Website Hosting" },
+            { num: "06", title: "Website Maintenance" },
+          ].map((service, index) => (
+            <div
+              key={service.num}
+              className={`service-item group flex items-center justify-center h-40 sm:h-40 md:h-52 lg:h-64 opacity-0 px-0.5 sm:px-2 ${
+                index >= 4 ? 'col-start-1 col-span-1 sm:col-auto' : 'col-span-1'
+              }`}
+            >
+              <h1 className="service-text text-[10px] sm:text-sm md:text-base lg:text-lg whitespace-nowrap [writing-mode:vertical-lr] rotate-180 group-hover:text-teal-400 transition-colors duration-300">
+                <span className="font-semibold italic text-xs sm:text-base md:text-lg lg:text-xl">{service.num}</span>
+                <span className="ml-0.5 sm:ml-2 leading-none">{service.title}</span>
+              </h1>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Stats Section */}
-      <div className="my-16 md:my-24 lg:my-32 relative z-10">
+      <div className="stats-section my-16 md:my-24 lg:my-32 relative z-10 overflow-hidden">
         <div className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto py-10 md:py-16 lg:py-20">
-          <h1 className="font-thin text-base sm:text-lg md:text-xl w-full text-center mb-12 md:mb-16 lg:mb-20 tracking-wider">
+          <h1 className="font-thin text-base sm:text-lg md:text-xl w-full text-center mb-12 md:mb-16 lg:mb-20 tracking-wider transform">
             WHY WORK WITH US?
           </h1>
           <div className="w-full lg:w-[90%] xl:w-[80%] mx-auto space-y-0">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-8 md:py-10 px-4 md:px-10 border-b-2 border-white/30 gap-4 sm:gap-8 hover:bg-white/5 transition-all duration-300">
+            <div className="stats-item flex flex-col sm:flex-row items-start sm:items-center justify-between py-8 md:py-10 px-4 md:px-10 border-b-2 border-white/30 gap-4 sm:gap-8 hover:bg-white/5 transition-all duration-300 transform">
               <h1 className="font-semibold text-4xl sm:text-5xl md:text-6xl">
                 100%
               </h1>
@@ -499,7 +596,7 @@ const Home = () => {
                 Work completed in house
               </h1>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-8 md:py-10 px-4 md:px-10 border-b-2 border-white/30 gap-4 sm:gap-8 hover:bg-white/5 transition-all duration-300">
+            <div className="stats-item flex flex-col sm:flex-row items-start sm:items-center justify-between py-8 md:py-10 px-4 md:px-10 border-b-2 border-white/30 gap-4 sm:gap-8 hover:bg-white/5 transition-all duration-300 transform">
               <h1 className="font-semibold text-4xl sm:text-5xl md:text-6xl">
                 10+
               </h1>
@@ -507,7 +604,7 @@ const Home = () => {
                 Years crafting digital experiences
               </h1>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-8 md:py-10 px-4 md:px-10 gap-4 sm:gap-8 hover:bg-white/5 transition-all duration-300">
+            <div className="stats-item flex flex-col sm:flex-row items-start sm:items-center justify-between py-8 md:py-10 px-4 md:px-10 gap-4 sm:gap-8 hover:bg-white/5 transition-all duration-300 transform">
               <h1 className="font-semibold text-4xl sm:text-5xl md:text-6xl">
                 150+
               </h1>
@@ -550,7 +647,7 @@ const Home = () => {
         <p className="text-base sm:text-lg md:text-xl text-center text-white/90 z-50">
           Book an informal chat with one of our specialists
         </p>
-        <button className="px-6 py-3 md:px-8 md:py-4 z-50 bg-white text-black text-lg md:text-xl rounded-full flex gap-2 items-center hover:bg-gray-100 transition-all duration-300 font-medium">
+        <button className="px-6 py-3 md:px-8 md:py-4 z-50 bg-white text-black text-sm sm:text-base md:text-xl rounded-full flex gap-2 items-center hover:bg-gray-100 transition-all duration-300 font-medium">
           <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
           GET IN TOUCH
         </button>
