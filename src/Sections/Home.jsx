@@ -53,11 +53,13 @@ const FAQItem = ({ question, answer, isOpen, onToggle }) => {
 
 const Home = () => {
   const images = [
-    { src: "/Images/company1.png", alt: "Company 1" },
-    { src: "/Images/company2.jpeg", alt: "Company 2" },
-    { src: "/Images/company3.png", alt: "Company 3" },
-    { src: "/Images/company4.png", alt: "Company 4" },
-    { src: "/Images/company5.jpeg", alt: "Company 5" },
+    { src: "Images/Client logo/client-1.svg", alt: "Company 1" },
+    { src: "Images/Client logo/client-2.svg", alt: "Company 2" },
+    { src: "Images/Client logo/client-3.svg", alt: "Company 3" },
+    { src: "Images/Client logo/client-4.svg", alt: "Company 4" },
+    { src: "Images/Client logo/client-5.svg", alt: "Company 5" },
+    { src: "Images/Client logo/client-6.svg", alt: "Company 6" },
+    { src: "Images/Client logo/client-7.svg", alt: "Company 7" },
   ];
 
   const [openFAQ, setOpenFAQ] = useState(null);
@@ -380,17 +382,17 @@ const Home = () => {
             Building
           </h1>
           <h1 className="font-bold text-[48px] sm:text-[64px] md:text-[80px] lg:text-[120px] xl:text-[128px] text-right leading-[0.9] tracking-tight opacity-0">
-            what matters<span className="text-teal-400">.</span>
+            what matters<span className="text-blue-500">.</span>
           </h1>
         </div>
-        <span className="hero-span absolute bottom-20 font-semibold left-10 z-20 text-sm sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-wider mt-8 text-teal-400">
-          Design • Develop • Deliver
+        <span className="hero-span absolute bottom-20 font-semibold left-10 z-20 text-2xl sm:text-base md:text-lg lg:text-xl w-full text-left px-4 tracking-wider mt-8">
+          Design <span className="text-blue-500">.</span> Develop <span className="text-blue-500">.</span> Deliver
         </span>
       </div>
 
       {/* Partners Section */}
       <div className="flex items-center justify-center py-10 my-10 px-4">
-        <h1 className="font-semibold text-lg sm:text-xl md:text-2xl lg:text-3xl text-center">
+        <h1 className="font-semibold text-lg sm:text-xl md:text-2xl lg:text-4xl text-center">
           We partner with some incredible brands, take a look.
         </h1>
       </div>
@@ -398,29 +400,23 @@ const Home = () => {
       {/* Logo Loop Section */}
       <div
         ref={logoLoopRef}
-        className="w-full md:w-[90%] lg:w-[80%] mx-auto overflow-hidden flex flex-col gap-10 md:gap-20 my-10 md:my-20 relative z-50"
+        className="w-full overflow-hidden flex flex-col gap-10 md:gap-20 my-10 md:my-20 relative z-50"
       >
         <LogoLoop
           logos={images}
           speed={60}
           direction="left"
-          logoHeight={120}
-          gap={40}
+          logoHeight={170}
+          gap={25}
           pauseOnHover
-          scaleOnHover
-          fadeOut
-          fadeOutColor="#000000"
         />
         <LogoLoop
           logos={images}
           speed={60}
           direction="right"
-          logoHeight={120}
-          gap={40}
+          logoHeight={170}
+          gap={25}
           pauseOnHover
-          scaleOnHover
-          fadeOut
-          fadeOutColor="#000000"
         />
       </div>
 
