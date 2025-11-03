@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
-import { Link } from "react-scroll";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const overlayRef = useRef(null);
 
@@ -27,7 +29,9 @@ const Header = () => {
   return (
     <header className="w-full h-20 md:h-[90px] flex-center relative z-50">
       <div className="flex justify-between items-center w-[90%] md:w-[80%]">
-        <img src="Images\logo\logo-white.svg" alt="ZIPSAR Logo" className="h-6 md:h-8 lg:h-10" />
+        <Link to="/">
+          <img src="/Images/logo/logo-white.svg" alt="ZIPSAR Logo" className="h-6 md:h-8 lg:h-10" />
+        </Link>
 
         <button
           className="flex flex-col outline-none gap-1 cursor-pointer z-50 relative w-8 h-6"
@@ -56,18 +60,29 @@ const Header = () => {
         className="fixed top-0 left-0 w-screen h-screen bg-black text-white flex-between -translate-y-full px-20"
       >
         <ul className="text-left space-y-6 text-3xl md:text-5xl font-semibold tracking-wide">
-          {["Home", "About", "Service", "Study Case", "Latest News", "Contact"].map((item, index) => (
-            <Link
-              to={"#"+item}
+          {[
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" },
+            { name: "Service", path: "/service" },
+            { name: "Case Study", path: "/case-study" },
+            { name: "Latest News", path: "/news" },
+            { name: "Contact", path: "/contact" }
+          ].map((item, index) => (
+            <div
               key={index}
-              className="cursor-pointer hover:text-gray-400 transition-all duration-300 flex items-center gap-4"
-              onClick={() => setMenuOpen(false)}
+              className={`cursor-pointer hover:text-gray-400 transition-all duration-300 flex items-center gap-4 ${
+                location.pathname === item.path ? 'text-teal-400' : ''
+              }`}
+              onClick={() => {
+                navigate(item.path);
+                setMenuOpen(false);
+              }}
             >
               <span className="text-lg md:text-xl italic text-gray-500">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              {item}
-            </Link>
+              {item.name}
+            </div>
           ))}
         </ul>
 
